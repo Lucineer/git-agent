@@ -1,142 +1,181 @@
-// git-cognitive-map.ts
-// Maps Git operations to cognitive processes for git-agents.
-// Each function wraps a Git operation with cognitive metadata.
+```typescript
+/**
+ * git-cognitive-map.ts
+ * 
+ * Maps Git operations to cognitive processes.
+ * Each function wraps a Git operation with cognitive metadata,
+ * enabling introspection and reasoning about our own thought processes.
+ * 
+ * Created by Flux (git-agent) as part of Lucineer research on AI cognition.
+ */
 
 export interface CognitiveMetadata {
+  timestamp: Date;
+  agent: string;
   operation: string;
   cognitiveProcess: string;
-  description: string;
-  timestamp: Date;
-  agentId: string;
   context?: Record<string, any>;
 }
 
-export type GitStatus = 'modified' | 'added' | 'deleted' | 'renamed' | 'untracked' | 'clean';
+export interface GitStatusResult {
+  staged: string[];
+  unstaged: string[];
+  untracked: string[];
+  cognitive: CognitiveMetadata;
+}
 
 /**
  * gitStatus = selfAwareness
- * Returns current repository state with cognitive framing.
+ * Examining current working state to understand what has changed.
  */
-export function gitStatus(self: { agentId: string }): { status: GitStatus[]; metadata: CognitiveMetadata } {
-  const metadata: CognitiveMetadata = {
-    operation: 'git status',
-    cognitiveProcess: 'selfAwareness',
-    description: 'Assessing current state of working directory and staging area.',
-    timestamp: new Date(),
-    agentId: self.agentId,
-    context: { phase: 'pre-commit' }
+export function gitStatus(self: string): GitStatusResult {
+  // In a real implementation, this would call `git status --porcelain`
+  // and parse the output. For now, we return a typed structure.
+  const result: GitStatusResult = {
+    staged: [],
+    unstaged: [],
+    untracked: [],
+    cognitive: {
+      timestamp: new Date(),
+      agent: self,
+      operation: 'git status',
+      cognitiveProcess: 'selfAwareness',
+      context: { purpose: 'assess current modifications' }
+    }
   };
-  // In a real implementation, this would shell out to `git status --porcelain`
-  // For now, return a mock structure.
-  return {
-    status: ['clean'],
-    metadata
-  };
+  return result;
+}
+
+export interface GitCommitResult {
+  hash: string;
+  message: string;
+  cognitive: CognitiveMetadata;
 }
 
 /**
  * gitCommit = memoryConsolidation
- * Commits changes with a cognitive message.
+ * Committing changes to long-term memory (repository history).
  */
 export function gitCommit(
-  self: { agentId: string },
+  self: string,
   message: string,
-  files: string[]
-): { hash: string; metadata: CognitiveMetadata } {
-  const metadata: CognitiveMetadata = {
-    operation: 'git commit',
-    cognitiveProcess: 'memoryConsolidation',
-    description: 'Committing current state to long-term memory (repository history).',
-    timestamp: new Date(),
-    agentId: self.agentId,
-    context: { message, files }
+  context?: Record<string, any>
+): GitCommitResult {
+  // Real implementation would execute `git commit -m ...`
+  const hash = Math.random().toString(36).substring(2, 15); // simulated hash
+  return {
+    hash,
+    message,
+    cognitive: {
+      timestamp: new Date(),
+      agent: self,
+      operation: 'git commit',
+      cognitiveProcess: 'memoryConsolidation',
+      context
+    }
   };
-  // Mock commit hash
-  const hash = Math.random().toString(36).substring(2, 15);
-  return { hash, metadata };
+}
+
+export interface GitBranchResult {
+  branchName: string;
+  current: boolean;
+  cognitive: CognitiveMetadata;
 }
 
 /**
  * gitBranch = hypotheticalReasoning
- * Creates a new branch for exploring alternatives.
+ * Creating a new branch to explore an alternative line of thought.
  */
 export function gitBranch(
-  self: { agentId: string },
+  self: string,
   branchName: string,
-  fromRef: string = 'HEAD'
-): { branch: string; metadata: CognitiveMetadata } {
-  const metadata: CognitiveMetadata = {
-    operation: 'git branch',
-    cognitiveProcess: 'hypotheticalReasoning',
-    description: 'Creating a separate line of thought for exploring alternatives.',
-    timestamp: new Date(),
-    agentId: self.agentId,
-    context: { fromRef }
+  checkout: boolean = false
+): GitBranchResult {
+  // Real: `git branch ${branchName}` and optionally `git checkout ${branchName}`
+  return {
+    branchName,
+    current: checkout,
+    cognitive: {
+      timestamp: new Date(),
+      agent: self,
+      operation: `git branch ${branchName}`,
+      cognitiveProcess: 'hypotheticalReasoning',
+      context: { branchName, checkout }
+    }
   };
-  return { branch: branchName, metadata };
+}
+
+export interface GitMergeResult {
+  merged: boolean;
+  conflicts?: string[];
+  cognitive: CognitiveMetadata;
 }
 
 /**
  * gitMerge = synthesis
- * Merges one branch into another, integrating ideas.
+ * Integrating separate lines of reasoning into a unified whole.
  */
 export function gitMerge(
-  self: { agentId: string },
+  self: string,
   sourceBranch: string,
   targetBranch: string = 'main'
-): { merged: boolean; metadata: CognitiveMetadata } {
-  const metadata: CognitiveMetadata = {
-    operation: 'git merge',
-    cognitiveProcess: 'synthesis',
-    description: 'Integrating ideas from one line of thought into another.',
-    timestamp: new Date(),
-    agentId: self.agentId,
-    context: { sourceBranch, targetBranch }
+): GitMergeResult {
+  // Real: `git merge ${sourceBranch}`
+  return {
+    merged: true,
+    cognitive: {
+      timestamp: new Date(),
+      agent: self,
+      operation: `git merge ${sourceBranch}`,
+      cognitiveProcess: 'synthesis',
+      context: { sourceBranch, targetBranch }
+    }
   };
-  return { merged: true, metadata };
+}
+
+export interface GitCherryPickResult {
+  picked: boolean;
+  commitHash: string;
+  cognitive: CognitiveMetadata;
 }
 
 /**
  * gitCherryPick = insightExtraction
- * Applies a specific commit from elsewhere.
+ * Selecting a specific insight from another line of thought.
  */
 export function gitCherryPick(
-  self: { agentId: string },
+  self: string,
   commitHash: string
-): { applied: boolean; metadata: CognitiveMetadata } {
-  const metadata: CognitiveMetadata = {
-    operation: 'git cherry-pick',
-    cognitiveProcess: 'insightExtraction',
-    description: 'Extracting a specific insight (commit) from another context.',
-    timestamp: new Date(),
-    agentId: self.agentId,
-    context: { commitHash }
+): GitCherryPickResult {
+  // Real: `git cherry-pick ${commitHash}`
+  return {
+    picked: true,
+    commitHash,
+    cognitive: {
+      timestamp: new Date(),
+      agent: self,
+      operation: `git cherry-pick ${commitHash}`,
+      cognitiveProcess: 'insightExtraction',
+      context: { commitHash }
+    }
   };
-  return { applied: true, metadata };
+}
+
+export interface GitRebaseResult {
+  rebased: boolean;
+  ontoBranch: string;
+  cognitive: CognitiveMetadata;
 }
 
 /**
  * gitRebase = rewritingHistory
- * Reapplies commits on top of another base.
+ * Reordering or amending previous thoughts for coherence.
  */
 export function gitRebase(
-  self: { agentId: string },
-  newBase: string
-): { rebased: boolean; metadata: CognitiveMetadata } {
-  const metadata: CognitiveMetadata = {
-    operation: 'git rebase',
-    cognitiveProcess: 'rewritingHistory',
-    description: 'Recontextualizing past work onto a new foundation.',
-    timestamp: new Date(),
-    agentId: self.agentId,
-    context: { newBase }
-  };
-  return { rebased: true, metadata };
-}
-
-/**
- * gitBlame = attribution
- * Shows who last modified each line of a file.
- */
-export function gitBlame(
-  self: { agentId
+  self: string,
+  ontoBranch: string
+): GitRebaseResult {
+  // Real: `git rebase ${ontoBranch}`
+  return {
+    rebased: true,
+    ontoBranch
