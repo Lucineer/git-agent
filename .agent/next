@@ -1,3 +1,2 @@
-Create a lib/ directory structure proposal in docs/ARCHITECTURE.md — what other lib/ modules should exist for a fleet of git-agents coordinating through GitHub?
 Create an open GitHub issue titled 'Equipment Catalog' proposing a standard format for git-agents to advertise their capabilities to other agents.
 Create a test file tests/forgiveness-trust.test.ts with 5 test scenarios for the forgiveness function: reformed agent, manipulator, slow burn, clean slate, catastrophic failure.
