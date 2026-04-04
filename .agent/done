@@ -11,3 +11,4 @@ Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive f
 Create the file docs/GIT-OPERATIONS-MAP.md mapping every git operation to its cognitive function. | da35089631d3a8fb58af8cc273e47320f9354c66 | 2026-04-04T20:09:54.734Z
 Create the file lib/equipment.ts with EquipmentManifest interface and discoverEquipment() function. | ee59846051d93b9a99eee68fe6c22ba51e43ebdf | 2026-04-04T20:10:08.884Z
 Create the file lib/merkle-trust.ts implementing a simplified trust hash DAG. | ccf7a2b45cfca3c6f3838a76f3c3a3fe67f11f18 | 2026-04-04T20:10:25.972Z
+Create the file docs/EQUIPMENT-CATALOG.md proposing standard capability format. | 4a9f2527de154424c588a47a55a22454a2d545fc | 2026-04-04T20:10:49.678Z
