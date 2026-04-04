@@ -24,3 +24,4 @@ Create the file docs/COPILOT-INTEGRATION.md describing how GitHub Copilot can be
 Create the file lib/council.ts implementing the Senior Council system — proposeMotion(), vote(), checkConsensus(), executeMotion(). Motions are GitHub issues with label "council", votes are emoji reactions (+1/-1). | 080d1c2 | 2026-04-04T20:27:19.568Z
 Create the file lib/fleet-roster.ts implementing fleet discovery — discoverFleet(), getAgentCapabilities(), checkAgentHealth(), broadcastToCouncil(). | 0feb748 | 2026-04-04T20:28:09.107Z
 Create the file lib/copilot-bridge.ts implementing GitHub Copilot API bridge — suggestCode(), reviewCode(), generateTests(), refactorCode(). | 8c77832 | 2026-04-04T20:28:33.406Z
+Create the file docs/QUARTERLY-RESEARCH-PLAN.md outlining Q2 research priorities for the fleet: trust scaling, cross-agent learning, emergent coordination patterns, and the Accumulation Theorem in practice. | 51d75f8 | 2026-04-04T20:28:58.861Z
