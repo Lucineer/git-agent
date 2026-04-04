@@ -1,2 +1,1 @@
-Create the file docs/COPILOT-INTEGRATION.md describing how GitHub Copilot can be accessed via API token to give git-agents coding capabilities. Include the "LaForge in Engineering" metaphor — the agent delegates coding tasks to Copilot and reviews the output.
 Create the file lib/copilot-bridge.ts implementing a bridge to GitHub Copilot API. Include suggestCode(), reviewCode(), generateTests(), refactorCode() functions that delegate to Copilot and return results for agent review.
