@@ -1,4 +1,3 @@
-Create docs/COORDINATION.md — describe how git-agents discover each other and coordinate using only git operations (issues, PRs, forks, tags).
 Create lib/trust-engine.ts implementing the INCREMENTS trust system with forgiveness. Include computeTrust(), recordEvent(), getTrustLevel().
 Create lib/discovery.ts — agent discovery by scanning repos for .agent/identity files via GitHub API.
 Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function.
