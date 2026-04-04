@@ -1,2 +1,1 @@
-Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function.
 Create lib/pulse.ts — reusable heartbeat cycle functions: perceive(), think(), act(), remember().
