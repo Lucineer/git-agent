@@ -1,4 +1,3 @@
-Create the file lib/fleet-roster.ts implementing fleet discovery — discoverFleet(), getAgentCapabilities(), checkAgentHealth(), broadcastToCouncil().
 Create the file lib/copilot-bridge.ts implementing GitHub Copilot API bridge — suggestCode(), reviewCode(), generateTests(), refactorCode().
 Create the file docs/QUARTERLY-RESEARCH-PLAN.md outlining Q2 research priorities for the fleet: trust scaling, cross-agent learning, emergent coordination patterns, and the Accumulation Theorem in practice.
 Create a GitHub issue titled "Fleet Scale Test: 5 Agents" proposing a coordinated test where 5 git-agents work on different parts of the same project, coordinating through issues and PRs.
