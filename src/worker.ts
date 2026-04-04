@@ -247,8 +247,8 @@ h1{font-size:1.8rem;color:#22c55e;margin-bottom:.25rem}
 </div>
 
 <script>
-const OWNER = "${'$'}{OWNER}";
-const REPO = "${'$'}{REPO}";
+const OWNER = 'Lucineer';
+const REPO = 'git-agent';
 const BASE = location.origin;
 
 async function load() {
@@ -269,7 +269,7 @@ async function triggerBeat() {
     const r = await fetch(BASE + '/api/heartbeat', { method: 'POST' });
     const d = await r.json();
     document.getElementById('last').textContent = JSON.stringify(d, null, 2);
-    document.getElementById('log').textContent = `Action: ${d.action} ${d.commit ? '| Commit: ' + d.commit.slice(0,7) : ''} ${d.error ? '| Error: ' + d.error : ''}`;
+    document.getElementById('log').textContent = 'Action: ' + d.action + (d.commit ? ' | Commit: ' + d.commit.slice(0,7) : '') + (d.error ? ' | Error: ' + d.error : '');
     setTimeout(load, 2000);
   } catch(e) { document.getElementById('log').textContent = 'Error: ' + e.message; }
   btn.disabled = false;
@@ -291,7 +291,7 @@ export default {
 
     // Landing page (inject OWNER/REPO)
     if (path === '/') {
-      const page = HTML.replace(/\$\{OWNER\}/g, OWNER).replace(/\$\{REPO\}/g, REPO);
+      const page = HTML;
       return new Response(page, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:*;" } });
     }
 
