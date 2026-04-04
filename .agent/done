@@ -13,3 +13,4 @@ Create the file lib/equipment.ts with EquipmentManifest interface and discoverEq
 Create the file lib/merkle-trust.ts implementing a simplified trust hash DAG. | ccf7a2b45cfca3c6f3838a76f3c3a3fe67f11f18 | 2026-04-04T20:10:25.972Z
 Create the file docs/EQUIPMENT-CATALOG.md proposing standard capability format. | 4a9f2527de154424c588a47a55a22454a2d545fc | 2026-04-04T20:10:49.678Z
 Create the file docs/DEAD-RECKONING-INTEGRATION.md describing how Dead Reckoning connects to git-agents. | 3ce54706d1c79f438df172d49e92e08444f3982c | 2026-04-04T20:11:12.457Z
+Create the file docs/STAR-TREK-PARADIGM.md describing the complete command structure: Picard(Admiral/Human)=repo owner, Riker(Captain)=git-agent, Data(Strategist)=Kimi K2.5, LaForge(Engineering)=Claude/Copilot, Worf(Security)=trust-engine, Troi(Counselor)=forgiveness-function. Include how they coordinate through git operations. | 87f3254 | 2026-04-04T20:21:23.930Z
