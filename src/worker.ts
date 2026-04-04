@@ -198,10 +198,12 @@ Rules:
     } else if (action === 'create_issue') {
       const title = pathMatch?.[1]?.trim() || 'Automated issue';
       const body = contentMatch?.[1]?.trim() || '';
-      await ghPost(`${path}/issues`, GITHUB_TOKEN, { title, body });
+      const issue = await ghPost(`${path}/issues`, GITHUB_TOKEN, { title, body });
+      commitSha = issue.html_url;
     } else if (action === 'comment' && targetMatch?.[1]) {
       const comment = commentMatch?.[1]?.trim() || 'Automated comment';
       await ghPost(`${path}/issues/${targetMatch[1]}/comments`, GITHUB_TOKEN, { body: comment });
+      commitSha = 'commented';
     }
     // 'done' — no action needed
 
