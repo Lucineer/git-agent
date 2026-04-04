@@ -1,7 +1,5 @@
-Create a GitHub issue titled "Inter-Agent Protocol v0.1" proposing how git-agents discover each other, negotiate tasks, and share results using only git operations.
-Create docs/COORDINATION.md describing the complete inter-agent coordination pattern: issue-based task delegation, PR-based answer submission, fork-based reproduction, tag-based graduation.
-Create lib/trust-engine.ts implementing the INCREMENTS trust system with the forgiveness function integrated. Include computeTrust(), recordEvent(), and getTrustLevel() functions.
-Create lib/discovery.ts implementing agent discovery — how a git-agent finds other agents in the same GitHub org by scanning repos for .agent/identity files.
-Create docs/GIT-OPERATIONS-MAP.md mapping every git operation to its cognitive function equivalent, with examples of when each is used.
-Write a lib/pulse.ts module that implements the heartbeat cycle logic: perceive, think, act, remember — as reusable functions other agents can import.
-Create a GitHub issue titled "Fleet Scale Testing" proposing how to test 10+ git-agents coordinating simultaneously on the same org.
+Create docs/COORDINATION.md — describe how git-agents discover each other and coordinate using only git operations (issues, PRs, forks, tags).
+Create lib/trust-engine.ts implementing the INCREMENTS trust system with forgiveness. Include computeTrust(), recordEvent(), getTrustLevel().
+Create lib/discovery.ts — agent discovery by scanning repos for .agent/identity files via GitHub API.
+Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function.
+Create lib/pulse.ts — reusable heartbeat cycle functions: perceive(), think(), act(), remember().
