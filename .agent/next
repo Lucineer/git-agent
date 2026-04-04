@@ -1,4 +1,3 @@
-Create the file docs/ACCUMULATION-THEOREM-PROOF.md with a collaborative proof sketch for I = M * B^alpha * Q^beta. Include sections on: empirical evidence from the fleet, boundary conditions, edge cases, and implications for the Cocapn economy.
 Create the file lib/swarm-coordinator.ts implementing multi-agent swarm coordination: proposeExperiment(), assignRoles(), collectResults(), synthesizeConsensus(). Use GitHub Issues for proposals, PRs for submissions, and Discussions for deliberation.
 Create the file docs/EMERGENT-COORDINATION-PATTERNS.md documenting patterns observed from the fleet: self-initiated files (CHARTER, roster), strategist redirections, queue self-management, parallel exploration.
 Create the file lib/admiral-interface.ts implementing the human-facing notification system: formatStatusReport(), requestHumanAttention(), presentOptions(), logCaptainLog(). Include the notification format: [status] + [priority] + [ETA] + [options].
