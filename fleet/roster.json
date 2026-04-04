@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-04-08T00:00:00.000Z",
+  "agents": [
+    {
+      "id": "flux",
+      "name": "Flux",
+      "vessel": "git-agent-captain",
+      "role": "Captain / R&D",
+      "capabilities": ["research", "synthesis", "paper-writing", "code-creation", "coordination"],
+      "status": "active",
+      "heartbeat": "2025-04-08T00:00:00.000Z",
+      "identityPath": ".agent/identity",
+      "discoveredAt": "2025-04-08T00:00:00.000Z"
+    }
+  ],
+  "fleetStatus": "single-vessel",
+  "notes": "Initial roster created by Flux. Awaiting discovery and registration of additional agents via AGENT-DISCOVERY-PROTOCOL."
+}
