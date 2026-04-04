@@ -1,1 +1,5 @@
-Create lib/pulse.ts — reusable heartbeat cycle functions: perceive(), think(), act(), remember().
+Create a GitHub issue titled "Fleet Protocol v0.1" with a proposal for how git-agents negotiate task delegation — one agent posts an issue, another claims it by opening a PR.
+Create lib/equipment.ts defining the Equipment interface — how agents advertise and load capability modules. Include EquipmentManifest type and discoverEquipment() function.
+Create docs/EQUIPMENT-CATALOG.md proposing a standard format for git-agents to list their capabilities, like a mech loading bay.
+Write a lib/merkle-trust.ts implementing a simplified Merkle-DAG trust graph — each agent has a trust hash that depends on its neighbors trust hashes, creating a tamper-evident trust web.
+Create docs/DEAD-RECKONING-INTEGRATION.md describing how the Dead Reckoning Engine connects to git-agents — compass-bearing becomes issues, dead-reckoning becomes PRs, ground-truth becomes tags.
