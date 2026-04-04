@@ -1,2 +1,1 @@
-Create the file lib/debt-tracker.ts implementing developmental debt management: recordShortcut(), calculateDebtScore(), prioritizePaydown(), generateDebtReport(). Debt items are tracked as GitHub issues with label "tech-debt".
 Create a GitHub issue titled "Senior Council Motion: Adopt Dead Reckoning as Standard Operating Procedure" proposing that all fleet agents use the Dead Reckoning pipeline for complex multi-step tasks. Label it "council" and include arguments for and against.
