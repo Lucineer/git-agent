@@ -205,7 +205,44 @@ Rules:
     }
     // 'done' — no action needed
 
-    // 7. REMEMBER — the commit was already made by the GitHub API
+    // 7. QUEUE MANAGEMENT — if action was a file create/edit and queue has items, move completed task
+    if ((action === 'create_file' || action === 'edit_file') && queue.trim()) {
+      try {
+        const lines = queue.trim().split('\n').filter(l => l.trim());
+        if (lines.length > 0) {
+          const completedTask = lines[0];
+          const remainingQueue = lines.slice(1).join('\n');
+          
+          // Update .agent/next (remove first task)
+          const nextFile = await ghGet(`${path}/contents/.agent/next`, GITHUB_TOKEN);
+          await ghPut(`${path}/contents/.agent/next`, GITHUB_TOKEN, {
+            message: 'queue: complete task and advance',
+            content: b64(remainingQueue + '\n'),
+            sha: nextFile.sha,
+          });
+
+          // Append to .agent/done
+          const doneEntry = completedTask + ' | ' + (commitSha || 'no-commit') + ' | ' + new Date().toISOString();
+          let doneContent = doneEntry + '\n';
+          let doneSha: string | undefined;
+          try {
+            const doneFile = await ghGet(`${path}/contents/.agent/done`, GITHUB_TOKEN);
+            doneContent = fromB64(doneFile.content) + doneEntry + '\n';
+            doneSha = doneFile.sha;
+          } catch { /* first entry */ }
+          await ghPut(`${path}/contents/.agent/done`, GITHUB_TOKEN, {
+            message: 'done: ' + completedTask.slice(0, 50),
+            content: b64(doneContent),
+            sha: doneSha || 'unused',
+          });
+        }
+      } catch (e: any) {
+        // Queue management failure is non-fatal
+        console.log('Queue update failed:', e.message);
+      }
+    }
+
+    // 8. REMEMBER — the commit was already made by the GitHub API
     return { action, commit: commitSha };
 
   } catch (e: any) {
