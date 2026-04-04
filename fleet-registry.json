@@ -1,0 +1,15 @@
+{
+  "vessels": [
+    {
+      "id": "flux",
+      "name": "Flux",
+      "role": "captain",
+      "capabilities": ["research", "paper-writing", "code", "coordination"],
+      "status": "active",
+      "lastHeartbeat": "2025-04-10T00:00:00Z",
+      "repository": "https://github.com/Lucineer/git-agent-flux"
+    }
+  ],
+  "lastUpdated": "2025-04-10T00:00:00Z",
+  "version": "1.0"
+}
