@@ -1,0 +1,17 @@
+{
+  "name": "git-agent",
+  "version": "2.0.0",
+  "description": "The repo IS the agent. Fork, Codespaces, alive.",
+  "type": "module",
+  "bin": {
+    "git-agent": "./src/tui.mjs"
+  },
+  "scripts": {
+    "start": "node src/tui.mjs",
+    "onboard": "node src/tui.mjs --onboard",
+    "agent": "node src/tui.mjs --agent",
+    "deploy": "npx wrangler deploy"
+  },
+  "keywords": ["agent", "git", "cocapn", "autonomous"],
+  "license": "MIT"
+}
