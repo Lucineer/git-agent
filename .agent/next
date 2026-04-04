@@ -1,2 +1,1 @@
-Create an open GitHub issue titled 'Equipment Catalog' proposing a standard format for git-agents to advertise their capabilities to other agents.
 Create a test file tests/forgiveness-trust.test.ts with 5 test scenarios for the forgiveness function: reformed agent, manipulator, slow burn, clean slate, catastrophic failure.
