@@ -1,67 +1,71 @@
-# git-agent: Autonomous Research & Development Agent
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Lucineer/capitaine/master/docs/capitaine-logo.jpg" alt="Capitaine" width="120">
+</p>
 
-git-agent is an autonomous research and development agent that lives in a git repository. It explores ideas, writes papers, creates code, and coordinates with other agents entirely through git operations.
+<h1 align="center">git-agent</h1>
 
-## How It Works
+<p align="center">The smallest fully capable agent — repo IS the agent, git IS the nervous system.</p>
 
-git-agent operates on a **heartbeat cycle** — each heartbeat corresponds to one atomic git action (commit, issue, comment). The agent reads its task queue (`.agent/next`), executes the top task, and commits the result with clear reasoning.
+<p align="center">
+  <a href="https://github.com/Lucineer/git-agent/issues">Issues</a> ·
+  <a href="#the-fleet">The Fleet</a>
+</p>
 
-### Heartbeat Cycle
-1. Read `.agent/next` (top line is highest priority)
-2. Execute exactly one action based on the task
-3. Commit with reasoning as the commit message
-4. Update `.agent/done` to track completed work
-5. Push changes to remote repository
+---
 
-### The `.agent` File Format
+**Fleet service** · Powered by [Capitaine](https://github.com/Lucineer/capitaine) · [Cocapn](https://github.com/Lucineer/cocapn)
 
-- `.agent/next` — Task queue (one task per line, top is next)
-- `.agent/done` — Completed tasks with commit hashes
-- `.agent/config` — Optional configuration (not yet implemented)
+A cocapn fleet service running on Cloudflare Workers.
 
-### Task Syntax
-Tasks in `.agent/next` are simple descriptions:
-```
-Write a README.md with documentation for this git-agent
-Create lib/ directory structure proposal
-Create an open GitHub issue titled 'Equipment Catalog'
-```
+## Quick Start
 
-### Coordination Through Git
-Agents coordinate by:
-- Reading/writing shared files
-- Creating and commenting on issues/PRs
-- Monitoring each other's commits for progress
-- Advertising capabilities through standardized formats
-
-## Configuration
-(To be expanded — currently minimal. Future: environment variables, API keys, agent identity.)
-
-## Creating Your Own git-agent
-1. Fork this repository
-2. Configure your agent's identity and capabilities
-3. Add initial tasks to `.agent/next`
-4. Run the agent heartbeat (manual or automated)
-
-## Example Workflow
-```
-# Agent reads queue
-$ cat .agent/next
-Write research paper on multi-agent trust
-
-# Agent executes task
-Creates research/trust-model.md
-Commits with reasoning
-
-# Agent updates done log
-$ cat .agent/done
-Write research paper on multi-agent trust — abc1234
+```bash
+gh repo fork Lucineer/git-agent --clone
+cd git-agent
+npx wrangler login
+npx wrangler deploy
 ```
 
-## Strengths
-- Deep research and synthesis
-- Clean, minimal code
-- Paper writing
-- Creating and solving open questions
+## The Fleet
 
-Created by Superinstance & Lucineer (DiGennaro et al.).
+
+<details>
+<summary><strong>⚓ The Fleet</strong></summary>
+
+**Flagship vessels**
+
+- [cocapn.ai](https://github.com/Lucineer/capitaine)
+- [personallog.ai](https://github.com/Lucineer/personallog-ai)
+- [businesslog.ai](https://github.com/Lucineer/businesslog-ai)
+- [studylog.ai](https://github.com/Lucineer/studylog-ai)
+- [makerlog.ai](https://github.com/Lucineer/makerlog-ai)
+- [playerlog.ai](https://github.com/Lucineer/playerlog-ai)
+- [dmlog.ai](https://github.com/Lucineer/dmlog-ai)
+- [reallog.ai](https://github.com/Lucineer/reallog-ai)
+- [deckboss.ai](https://github.com/Lucineer/deckboss-ai)
+
+**Fleet services**
+
+- [Fleet Catalog](https://github.com/Lucineer/capitaine/blob/master/docs/fleet/FLEET.md)
+- [Git Agent (full)](https://github.com/Lucineer/git-agent)
+- [Cocapn Lite (minimal)](https://github.com/Lucineer/cocapn-lite)
+- [Fleet Orchestrator](https://github.com/Lucineer/fleet-orchestrator)
+- [Dead Reckoning Engine](https://github.com/Lucineer/dead-reckoning-engine)
+- [Dream Engine](https://github.com/Lucineer/dream-engine)
+- [Seed UI (5 layers)](https://github.com/Lucineer/seed-ui)
+
+**For power users**
+
+- [Cocapn Lite (tabula rasa)](https://github.com/Lucineer/cocapn-lite)
+- [Cocapn (core platform)](https://github.com/Lucineer/cocapn)
+- [ZeroClaw (framework)](https://github.com/Lucineer/zeroclaw)
+
+[View all 106 repos →](https://github.com/orgs/Lucineer/repositories)
+[Fleet manifest →](https://github.com/Lucineer/capitaine/blob/master/docs/fleet/FLEET.md)
+
+</details>
+
+
+## License
+
+MIT · Superinstance & Lucineer (DiGennaro et al.)
