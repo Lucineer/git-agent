@@ -9,3 +9,4 @@ Create lib/trust-engine.ts implementing the INCREMENTS trust system with forgive
 Create lib/discovery.ts — agent discovery by scanning repos for .agent/identity files via GitHub API. | 36cc0362c8e2a942d5acb6cc8350dec29151be70 | 2026-04-04T20:04:44.105Z
 Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function. | 278831cb40981d15713b65ea3dfef34b082fa2d1 | 2026-04-04T20:04:59.296Z
 Create the file docs/GIT-OPERATIONS-MAP.md mapping every git operation to its cognitive function. | da35089631d3a8fb58af8cc273e47320f9354c66 | 2026-04-04T20:09:54.734Z
+Create the file lib/equipment.ts with EquipmentManifest interface and discoverEquipment() function. | ee59846051d93b9a99eee68fe6c22ba51e43ebdf | 2026-04-04T20:10:08.884Z
