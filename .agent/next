@@ -1,3 +1,2 @@
-Create lib/discovery.ts — agent discovery by scanning repos for .agent/identity files via GitHub API.
 Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function.
 Create lib/pulse.ts — reusable heartbeat cycle functions: perceive(), think(), act(), remember().
