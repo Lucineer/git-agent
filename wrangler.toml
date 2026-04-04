@@ -1,0 +1,8 @@
+name = "git-agent"
+main = "src/worker.ts"
+compatibility_date = "2024-12-01"
+account_id = "049ff5e84ecf636b53b162cbb580aae6"
+
+[vars]
+OWNER = "Lucineer"
+REPO = "git-agent"
