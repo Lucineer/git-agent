@@ -1,12 +1,3 @@
-```typescript
-/**
- * Iron‑Sharpens‑Iron Arena
- * 
- * When two competing approaches exist, create two branches,
- * run both in parallel, evaluate results, merge the winner,
- * archive the loser.
- */
-
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -15,98 +6,84 @@ export interface ArenaConfig {
   branchA: string;
   branchB: string;
   testCommand: string;
-  evaluationMetric: 'speed' | 'accuracy' | 'memory' | 'score';
-  higherIsBetter: boolean;
-  timeoutMs?: number;
+  evaluationMetric: (outputA: string, outputB: string) => number;
+  mergeTarget: string;
 }
 
-export interface ArenaResult {
-  winner: string | null;
-  loser: string | null;
-  scores: { [branch: string]: number };
-  logs: { [branch: string]: string };
-  merged: boolean;
-  error?: string;
-}
+export class ParallelArena {
+  constructor(private repoPath: string) {}
 
-/**
- * Create two branches for competing implementations.
- */
-export function createArena(baseBranch: string, config: ArenaConfig): void {
-  // Ensure we start from the base branch
-  execSync(`git checkout ${baseBranch}`, { stdio: 'inherit' });
-  
-  // Create branch A
-  execSync(`git checkout -b ${config.branchA}`, { stdio: 'inherit' });
-  // Branch B is created by switching back and branching off base
-  execSync(`git checkout ${baseBranch}`, { stdio: 'inherit' });
-  execSync(`git checkout -b ${config.branchB}`, { stdio: 'inherit' });
-  
-  console.log(`Arena created: ${config.branchA} vs ${config.branchB}`);
-}
+  createArena(config: ArenaConfig): void {
+    // Create branch A
+    execSync(`git checkout -b ${config.branchA}`, { cwd: this.repoPath });
+    // For now, we'll assume the competing code is already present in the working directory
+    // In practice, we'd stage and commit it here.
+    execSync(`git add .`, { cwd: this.repoPath });
+    execSync(`git commit -m "arena: initial commit for ${config.branchA}"`, { cwd: this.repoPath });
 
-/**
- * Run the competing branches and collect results.
- */
-export function runCompeting(config: ArenaConfig): ArenaResult {
-  const scores: { [branch: string]: number } = {};
-  const logs: { [branch: string]: string } = {};
-  let winner: string | null = null;
-  let loser: string | null = null;
-  
-  const branches = [config.branchA, config.branchB];
-  
-  for (const branch of branches) {
-    try {
-      execSync(`git checkout ${branch}`, { stdio: 'pipe' });
-      
-      const start = Date.now();
-      const output = execSync(config.testCommand, {
-        timeout: config.timeoutMs || 30000,
-        encoding: 'utf-8',
-      });
-      const duration = Date.now() - start;
-      
-      logs[branch] = output;
-      
-      // Parse score from output (simplistic; in practice use regex or structured output)
-      let score = 0;
-      if (config.evaluationMetric === 'speed') {
-        score = -duration; // lower duration is better
-      } else if (config.evaluationMetric === 'accuracy') {
-        const match = output.match(/accuracy[:=]\s*([0-9.]+)/);
-        score = match ? parseFloat(match[1]) : 0;
-      } else if (config.evaluationMetric === 'memory') {
-        const match = output.match(/memory[:=]\s*([0-9.]+)/);
-        score = match ? -parseFloat(match[1]) : 0; // lower memory is better
-      } else {
-        // generic score extraction
-        const match = output.match(/score[:=]\s*([0-9.]+)/);
-        score = match ? parseFloat(match[1]) : 0;
-      }
-      
-      scores[branch] = score;
-    } catch (error: any) {
-      logs[branch] = `Error: ${error.message}`;
-      scores[branch] = config.higherIsBetter ? -Infinity : Infinity;
-    }
+    // Create branch B
+    execSync(`git checkout main`, { cwd: this.repoPath });
+    execSync(`git checkout -b ${config.branchB}`, { cwd: this.repoPath });
+    execSync(`git add .`, { cwd: this.repoPath });
+    execSync(`git commit -m "arena: initial commit for ${config.branchB}"`, { cwd: this.repoPath });
+
+    console.log(`Arena created: ${config.branchA} vs ${config.branchB}`);
   }
-  
-  // Determine winner
-  if (scores[config.branchA] !== undefined && scores[config.branchB] !== undefined) {
-    if (config.higherIsBetter) {
-      if (scores[config.branchA] > scores[config.branchB]) {
-        winner = config.branchA;
-        loser = config.branchB;
-      } else if (scores[config.branchB] > scores[config.branchA]) {
-        winner = config.branchB;
-        loser = config.branchA;
-      }
-    } else {
-      if (scores[config.branchA] < scores[config.branchB]) {
-        winner = config.branchA;
-        loser = config.branchB;
-      } else if (scores[config.branchB] < scores[config.branchA]) {
-        winner = config.branchB;
-        loser = config.branchA;
-      }
+
+  runCompeting(branchA: string, branchB: string, testCommand: string): { outputA: string; outputB: string } {
+    let outputA = '';
+    let outputB = '';
+
+    try {
+      execSync(`git checkout ${branchA}`, { cwd: this.repoPath });
+      outputA = execSync(testCommand, { cwd: this.repoPath, encoding: 'utf-8' });
+    } catch (e: any) {
+      outputA = `ERROR: ${e.message}`;
+    }
+
+    try {
+      execSync(`git checkout ${branchB}`, { cwd: this.repoPath });
+      outputB = execSync(testCommand, { cwd: this.repoPath, encoding: 'utf-8' });
+    } catch (e: any) {
+      outputB = `ERROR: ${e.message}`;
+    }
+
+    return { outputA, outputB };
+  }
+
+  evaluateResults(outputA: string, outputB: string, metric: (a: string, b: string) => number): number {
+    return metric(outputA, outputB);
+  }
+
+  mergeWinner(winnerBranch: string, targetBranch: string): void {
+    execSync(`git checkout ${targetBranch}`, { cwd: this.repoPath });
+    execSync(`git merge --no-ff ${winnerBranch} -m "arena: merge winner ${winnerBranch}"`, { cwd: this.repoPath });
+    console.log(`Merged ${winnerBranch} into ${targetBranch}`);
+  }
+
+  archiveLoser(loserBranch: string): void {
+    // Tag the loser branch for historical reference
+    const tagName = `arena/loser-${loserBranch}-${Date.now()}`;
+    execSync(`git tag ${tagName} ${loserBranch}`, { cwd: this.repoPath });
+    execSync(`git branch -D ${loserBranch}`, { cwd: this.repoPath });
+    console.log(`Archived ${loserBranch} with tag ${tagName}`);
+  }
+
+  async runArena(config: ArenaConfig): Promise<string> {
+    this.createArena(config);
+    const { outputA, outputB } = this.runCompeting(config.branchA, config.branchB, config.testCommand);
+    const score = this.evaluateResults(outputA, outputB, config.evaluationMetric);
+    const winner = score >= 0 ? config.branchA : config.branchB;
+    const loser = winner === config.branchA ? config.branchB : config.branchA;
+
+    this.mergeWinner(winner, config.mergeTarget);
+    this.archiveLoser(loser);
+
+    return winner;
+  }
+}
+
+// Example metric: simple string length (for illustration)
+export function exampleMetric(outputA: string, outputB: string): number {
+  return outputA.length - outputB.length;
+}
