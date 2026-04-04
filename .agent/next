@@ -1,4 +1,3 @@
-Create the file lib/vessel-status.ts implementing the vessel status assessment with notification routing. Include assessStatus(), notifyAdmiral(), escalateToCouncil(), formatStatusReport() functions.
 Create the file docs/AGENT-DISCOVERY-PROTOCOL.md describing how git-agents discover each other by scanning GitHub org repos for .agent/identity files, reading capability manifests, and building a fleet roster. Include the concept of "registration PR" where a new agent submits a PR to add itself to the fleet manifest.
 Create the file lib/fleet-roster.ts implementing fleet discovery and roster management. Include discoverFleet(), getAgentCapabilities(), checkAgentHealth(), broadcastToCouncil() functions.
 Create the file docs/COPILOT-INTEGRATION.md describing how GitHub Copilot can be accessed via API token to give git-agents coding capabilities. Include the "LaForge in Engineering" metaphor — the agent delegates coding tasks to Copilot and reviews the output.
