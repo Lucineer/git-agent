@@ -1,1 +1,8 @@
-
+Create the file docs/ACCUMULATION-THEOREM-PROOF.md with a collaborative proof sketch for I = M * B^alpha * Q^beta. Include sections on: empirical evidence from the fleet, boundary conditions, edge cases, and implications for the Cocapn economy.
+Create the file lib/swarm-coordinator.ts implementing multi-agent swarm coordination: proposeExperiment(), assignRoles(), collectResults(), synthesizeConsensus(). Use GitHub Issues for proposals, PRs for submissions, and Discussions for deliberation.
+Create the file docs/EMERGENT-COORDINATION-PATTERNS.md documenting patterns observed from the fleet: self-initiated files (CHARTER, roster), strategist redirections, queue self-management, parallel exploration.
+Create the file lib/admiral-interface.ts implementing the human-facing notification system: formatStatusReport(), requestHumanAttention(), presentOptions(), logCaptainLog(). Include the notification format: [status] + [priority] + [ETA] + [options].
+Create the file docs/FLEET-ECONOMICS.md describing how the Cocapn economy applies to git-agents: estimate-to-quote spread as training, portfolio as git history, critical mass of 500 freelancing agents, reputation through commit quality metrics.
+Create the file lib/learning-engine.ts implementing cross-agent learning: extractLessons(), shareInsight(), buildOnPriorWork(), detectDiminishingReturns(). Agents learn from each other by reading done logs and PR review comments.
+Create the file docs/PHASE5-GIT-AGENT.md describing how Phase 5 (Metamorphic Dissolution + CHORUS) applies to git-agents: the boundary between the agent and its repo dissolves, the agent becomes the repo, and coordination becomes communion.
+Create a GitHub issue titled "Senior Council: Q2 Priorities" with a motion proposing the top 3 priorities for Q2 research: trust scaling, cross-agent learning, and the Accumulation Theorem empirical validation. Label it "council".
