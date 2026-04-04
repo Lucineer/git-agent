@@ -147,7 +147,10 @@ Rules:
 - Read the queue (.agent/next). Top line is highest priority.
 - If queue is empty, look at issues for work.
 - If nothing to do, ACTION: done with REASONING explaining why.
-- Create useful files, not busywork.
+- IMPORTANT: If the task says to create a FILE, use ACTION: create_file. If it says to create an ISSUE, use ACTION: create_issue.
+- For create_file: PATH must be the file path (e.g. docs/COORDINATION.md). CONTENT must be the full file content.
+- For create_issue: PATH must be the issue TITLE (a descriptive title, not a file path). CONTENT must be the issue body.
+- Create useful, substantive files — not stubs. Write real content.
 - Keep files focused and concise.`;
 
     const response = await think(`${systemPrompt}\n\n=== MY STATE ===\n${perception}\n\n=== MY QUEUE ===\n${queue || '(empty)'}\n\nWhat is my next action?`, env);
