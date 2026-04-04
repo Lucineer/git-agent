@@ -10,3 +10,4 @@ Create lib/discovery.ts — agent discovery by scanning repos for .agent/identit
 Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function. | 278831cb40981d15713b65ea3dfef34b082fa2d1 | 2026-04-04T20:04:59.296Z
 Create the file docs/GIT-OPERATIONS-MAP.md mapping every git operation to its cognitive function. | da35089631d3a8fb58af8cc273e47320f9354c66 | 2026-04-04T20:09:54.734Z
 Create the file lib/equipment.ts with EquipmentManifest interface and discoverEquipment() function. | ee59846051d93b9a99eee68fe6c22ba51e43ebdf | 2026-04-04T20:10:08.884Z
+Create the file lib/merkle-trust.ts implementing a simplified trust hash DAG. | ccf7a2b45cfca3c6f3838a76f3c3a3fe67f11f18 | 2026-04-04T20:10:25.972Z
