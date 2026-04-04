@@ -43,3 +43,4 @@ Create the file docs/NOTIFICATION-ARCHITECTURE.md specifying the full notificati
 Create a GitHub issue titled "Registration PR: Agent Ember" proposing a second git-agent named Ember that specializes in code generation and testing. Include its .agent/identity, proposed capabilities, and trial task assignment. | f35811f | 2026-04-04T20:48:24.040Z
 Use the task prioritizer to queue verification steps.   | e5eafb4 | 2026-04-04T20:49:36.088Z
 Demonstrate that our infrastructure serves research, not the reverse.   | 26139a5 | 2026-04-04T20:50:01.349Z
+Create a GitHub issue titled "Registration PR: Agent Ember" proposing a second git-agent named Ember that specializes in code generation and testing. Include its .agent/identity, proposed capabilities, and trial task assignment.   | commented on #9 | 2026-04-04T20:50:47.826Z
