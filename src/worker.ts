@@ -301,7 +301,22 @@ RULES:
       ref = `PR #${pr.number}`;
     }
 
-    // 9. QUEUE MANAGEMENT — advance if task was from queue
+    // 9. MISSION LOG — append to captain's log
+    try {
+      const logEntry = `## Heartbeat ${Date.now()}
+- **Action**: ${action} ${ref || ''}
+- **Reasoning**: ${reasoning}
+- **Strategist**: ${strategistAdvice ? 'Consulted' : 'Not consulted'}
+- **Duration**: ${Date.now() - start}ms
+- **Notification**: ${assessVesselStatus(queue, issues, pulls).message}
+
+`;
+      let logContent = logEntry;
+      try { logContent = await readFile('docs/mission-log.md', GITHUB_TOKEN, repoPath) + logEntry; } catch {}
+      await writeFile('docs/mission-log.md', logContent, 'log: heartbeat ' + action, GITHUB_TOKEN, repoPath);
+    } catch (e: any) { console.log('Mission log failed:', e.message); }
+
+    // 10. QUEUE MANAGEMENT — advance if task was from queue
     if (queue.trim() && action !== 'done') {
       const lines = queue.trim().split('\n').filter(l => l.trim());
       if (lines.length > 0) {
