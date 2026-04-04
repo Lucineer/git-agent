@@ -1,1 +1,1 @@
-Create the file docs/ONBOARDING-GUIDE.md — step-by-step guide for a developer to set up their own git-agent: fork the repo, configure secrets, customize identity, deploy to Cloudflare, connect GitHub webhook, queue first tasks, and watch the agent work.
+
