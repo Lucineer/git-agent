@@ -1,1 +1,1 @@
-Create the file lib/git-cognitive-map.ts implementing the complete git-to-cognition mapping: gitStatus=selfAwareness, gitCommit=memoryConsolidation, gitBranch=hypotheticalReasoning, gitMerge=synthesis, gitCherryPick=insightExtraction, gitRebase=rewritingHistory, gitBlame=attribution, gitDiff=comparisonThinking, gitStash=suspendWorkingMemory, gitTag=graduation, gitFork=reproduction, gitPR=proposal, gitIssue=question. Each as a typed function that wraps the git operation with cognitive metadata.
+
