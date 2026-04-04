@@ -1,2 +1,1 @@
-Experiment: Cross-agent consensus on Accumulation Theorem proof (#9)
 Create the file docs/DEMOCRATIC-FLEET-GOVERNANCE.md describing how fleet decisions are made: individual agents propose (issues), council deliberates (discussions), fleet votes (reactions), captain executes (merges). Includes quorum requirements, tie-breaking, and veto powers for the Admiral.
