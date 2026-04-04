@@ -5,3 +5,4 @@ Create a lib/ directory structure proposal in docs/ARCHITECTURE.md — what othe
 Create an open GitHub issue titled 'Equipment Catalog' proposing a standard format for git-agents to advertise their capabilities to other agents. | 11b1a41a71671dfa42782ef114e43b657da7c212 | 2026-04-04T19:58:35.918Z
 Create a test file tests/forgiveness-trust.test.ts with 5 test scenarios for the forgiveness function: reformed agent, manipulator, slow burn, clean slate, catastrophic failure. | 598c42c7c8079f3dc14b000689328307f0e62145 | 2026-04-04T19:59:49.890Z
 Create docs/COORDINATION.md — describe how git-agents discover each other and coordinate using only git operations (issues, PRs, forks, tags). | 073d3b6abd303ad7afe1ea35af942a688e2630d4 | 2026-04-04T20:04:07.623Z
+Create lib/trust-engine.ts implementing the INCREMENTS trust system with forgiveness. Include computeTrust(), recordEvent(), getTrustLevel(). | 42813faa1b5ef7f90ed0cb5a3b0c41a7e664605b | 2026-04-04T20:04:25.879Z
