@@ -7,3 +7,4 @@ Create a test file tests/forgiveness-trust.test.ts with 5 test scenarios for the
 Create docs/COORDINATION.md — describe how git-agents discover each other and coordinate using only git operations (issues, PRs, forks, tags). | 073d3b6abd303ad7afe1ea35af942a688e2630d4 | 2026-04-04T20:04:07.623Z
 Create lib/trust-engine.ts implementing the INCREMENTS trust system with forgiveness. Include computeTrust(), recordEvent(), getTrustLevel(). | 42813faa1b5ef7f90ed0cb5a3b0c41a7e664605b | 2026-04-04T20:04:25.879Z
 Create lib/discovery.ts — agent discovery by scanning repos for .agent/identity files via GitHub API. | 36cc0362c8e2a942d5acb6cc8350dec29151be70 | 2026-04-04T20:04:44.105Z
+Create docs/GIT-OPERATIONS-MAP.md — map every git operation to its cognitive function. | 278831cb40981d15713b65ea3dfef34b082fa2d1 | 2026-04-04T20:04:59.296Z
