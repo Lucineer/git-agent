@@ -19,6 +19,8 @@ export interface Env {
   REPO: string;
   MODEL?: string;        // Override model for main thinking
   STRATEGIST_MODEL?: string; // Override for Kimi strategist calls
+  // Keeper memory
+  MEMORY: KVNamespace;
 }
 
 const GH_API = 'https://api.github.com';
@@ -153,6 +155,156 @@ async function advanceQueue(token: string, repoPath: string, completedTask: stri
   }
 }
 
+// ── Keeper Memory System (hot/warm/cold tiers) ─────────────
+// Hot: last 10 heartbeats (1-2 hours). Warm: last 7 days.
+// Cold: patterns and lessons from all time. GC promotes/demotes.
+
+interface KeeperLesson {
+  type: 'error' | 'success' | 'pattern' | 'constraint';
+  content: string;
+  context: string;
+  heartbeatId: number;
+  confidence: number;
+  applications: number;
+}
+
+interface KeeperHotEntry {
+  heartbeat: number;
+  action: string;
+  ref: string;
+  reasoning: string;
+  duration: number;
+  timestamp: number;
+}
+
+async function keeperRemember(env: Env, entry: KeeperHotEntry, action: string, error?: string): Promise<void> {
+  const kv = env.MEMORY;
+  const now = Date.now();
+
+  // 1. Store in hot ring (last 10)
+  const hotKey = 'hot:' + entry.heartbeat;
+  await kv.put(hotKey, JSON.stringify(entry), { expirationTtl: 7200 }); // 2h TTL
+
+  // Update hot index
+  let hotIndex: string[] = [];
+  try { hotIndex = JSON.parse(await kv.get('hot_index') || '[]'); } catch {}
+  hotIndex.push(hotKey);
+  if (hotIndex.length > 10) {
+    // Evict oldest to warm
+    const evicted = hotIndex.shift();
+    if (evicted) {
+      try {
+        const evictedData = JSON.parse(await kv.get(evicted) || '{}');
+        await kv.put('warm:' + evictedData.heartbeat, JSON.stringify(evictedData), { expirationTtl: 604800 }); // 7d TTL
+        await kv.delete(evicted);
+      } catch {}
+    }
+  }
+  await kv.put('hot_index', JSON.stringify(hotIndex));
+
+  // 2. Extract lessons from errors and patterns
+  if (error) {
+    await keeperAddLesson(kv, {
+      type: 'error',
+      content: error.slice(0, 200),
+      context: 'Action: ' + action,
+      heartbeatId: entry.heartbeat,
+      confidence: 0.5,
+      applications: 0,
+    });
+  }
+
+  // 3. Track action patterns
+  const patternKey = 'pattern:' + action;
+  const currentCount = parseInt(await kv.get(patternKey) || '0');
+  await kv.put(patternKey, String(currentCount + 1));
+  if (currentCount >= 5) {
+    await keeperAddLesson(kv, {
+      type: 'pattern',
+      content: 'Frequently performs action: ' + action + ' (' + (currentCount + 1) + ' times)',
+      context: 'Behavioral pattern detected',
+      heartbeatId: entry.heartbeat,
+      confidence: 0.8,
+      applications: 0,
+    });
+  }
+}
+
+async function keeperAddLesson(kv: KVNamespace, lesson: KeeperLesson): Promise<void> {
+  const id = 'lesson:' + Date.now() + ':' + Math.random().toString(36).slice(2, 6);
+  await kv.put(id, JSON.stringify(lesson));
+
+  // Update lesson index
+  let lessons: string[] = [];
+  try { lessons = JSON.parse(await kv.get('lesson_index') || '[]'); } catch {}
+  lessons.push(id);
+  await kv.put('lesson_index', JSON.stringify(lessons));
+}
+
+async function keeperRecall(kv: KVNamespace, context: string): Promise<string> {
+  const parts: string[] = [];
+
+  // Hot: last 3 entries
+  let hotIndex: string[] = [];
+  try { hotIndex = JSON.parse(await kv.get('hot_index') || '[]'); } catch {}
+  const recentHot = hotIndex.slice(-3);
+  for (const key of recentHot) {
+    try {
+      const entry = JSON.parse(await kv.get(key) || '{}');
+      parts.push('- [' + entry.action + '] ' + (entry.ref || '') + ' (' + Math.round(entry.duration) + 'ms)');
+    } catch {}
+  }
+  if (parts.length) parts.unshift('=== RECENT ACTIONS (hot) ===');
+
+  // Cold: relevant lessons
+  let lessons: string[] = [];
+  try { lessons = JSON.parse(await kv.get('lesson_index') || '[]'); } catch {}
+  const ctxLow = context.toLowerCase();
+  const relevant: string[] = [];
+  for (const id of lessons.slice(-20)) { // check last 20 lessons
+    try {
+      const lesson = JSON.parse(await kv.get(id) || '{}');
+      if (lesson.content.toLowerCase().includes(ctxLow.split(' ').find(w => w.length > 4) || '')) {
+        relevant.push('[' + lesson.type + '] ' + lesson.content);
+      }
+    } catch {}
+  }
+  if (relevant.length) {
+    parts.push('');
+    parts.push('=== RELEVANT LESSONS (cold) ===');
+    parts.push(...relevant.slice(0, 3));
+  }
+
+  // Pattern stats
+  const patternKeys = (await kv.list({ prefix: 'pattern:' })).keys;
+  if (patternKeys.length > 0) {
+    parts.push('');
+    parts.push('=== ACTION PATTERNS ===');
+    for (const pk of patternKeys.slice(-5)) {
+      const count = await kv.get(pk.name);
+      const action = pk.name.replace('pattern:', '');
+      if (count && parseInt(count) >= 3) parts.push('- ' + action + ': ' + count + 'x');
+    }
+  }
+
+  return parts.join('\n');
+}
+
+async function keeperGC(kv: KVNamespace): Promise<{ cleaned: number }> {
+  let cleaned = 0;
+  // Clean expired hot entries from index
+  let hotIndex: string[] = [];
+  try { hotIndex = JSON.parse(await kv.get('hot_index') || '[]'); } catch {}
+ const valid: string[] = [];
+  for (const key of hotIndex) {
+    if (await kv.get(key)) { valid.push(key); } else { cleaned++; }
+  }
+  if (valid.length !== hotIndex.length) {
+    await kv.put('hot_index', JSON.stringify(valid));
+  }
+  return { cleaned };
+}
+
 // ── Strategist (Kimi K2.5) — senior advisor ─────────────────
 
 async function consultStrategist(situation: string, identity: string, env: Env): Promise<string> {
@@ -191,6 +343,7 @@ async function heartbeat(env: Env): Promise<HeartbeatResult> {
     try { done = await readFile('.agent/done', GITHUB_TOKEN, repoPath); } catch {}
 
     // 5. PERCEIVE
+    const keeperContext = await keeperRecall(env.MEMORY, queue || 'idle');
     const perception = [
       `=== RECENT COMMITS (${commits.length}) ===`,
       ...commits.slice(0, 5).map((c: any) => `- ${c.sha.slice(0, 7)}: ${c.commit.message.split('\n')[0]}`),
@@ -244,7 +397,7 @@ RULES:
 - Write REAL content. Not stubs. Not summaries. The actual code/docs.
 - If strategist advice is provided, incorporate it into your decision.${strategistAdvice ? '\n\n=== STRATEGIST (Commander Data) ADVISORY ===\n' + strategistAdvice : ''}`;
 
-    const response = await think(`${systemPrompt}\n\n=== MY STATE ===\n${perception}\n\n=== MY QUEUE ===\n${queue || '(empty — look at issues/PRs for work)'}\n\nWhat is my next action?`, env);
+    const response = await think(`${systemPrompt}\n\n=== MY STATE ===\n${perception}\n\n=== KEEPER MEMORY ===\n${keeperContext || '(no memories yet)'}\n\n=== MY QUEUE ===\n${queue || '(empty — look at issues/PRs for work)'}\n\nWhat is my next action?`, env);
 
     // 8. ACT
     const actionMatch = response.match(/ACTION:\s*(\w+)/);
@@ -327,12 +480,24 @@ RULES:
     // 10. VESSEL STATUS — determine notification level
     const notification = assessVesselStatus(queue, issues, pulls);
 
+    // 11. KEEPER MEMORY — remember this heartbeat
+    const beatNum = done.split('\n').filter(l => l.trim()).length + 1;
+    await keeperRemember(env, {
+      heartbeat: beatNum,
+      action,
+      ref: ref || '',
+      reasoning,
+      duration: Date.now() - start,
+      timestamp: Date.now(),
+    }, action);
+
     return {
       action,
       commit: commitSha,
       ref,
       strategistPresent: !!strategistAdvice,
       notification,
+      keeperEntries: beatNum,
       duration: Date.now() - start,
     };
 
@@ -554,6 +719,29 @@ export default {
         ].join('\n');
         const advice = await consultStrategist(situation, identity, env);
         return new Response(JSON.stringify({ advice }), { headers: j });
+      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
+    }
+
+    if (path === '/api/keeper/stats') {
+      try {
+        const hotIndex = JSON.parse(await env.MEMORY.get('hot_index') || '[]');
+        const lessonIndex = JSON.parse(await env.MEMORY.get('lesson_index') || '[]');
+        const patterns = (await env.MEMORY.list({ prefix: 'pattern:' })).keys;
+        return new Response(JSON.stringify({
+          hotEntries: hotIndex.length,
+          lessons: lessonIndex.length,
+          patterns: patterns.length,
+          totalMemories: hotIndex.length + lessonIndex.length,
+        }), { headers: j });
+      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
+    }
+
+    if (path === '/api/keeper/recall') {
+      try {
+        const url = new URL(request.url);
+        const context = url.searchParams.get('q') || 'recent';
+        const memories = await keeperRecall(env.MEMORY, context);
+        return new Response(JSON.stringify({ context, memories }), { headers: j });
       } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
     }
 

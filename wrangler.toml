@@ -6,3 +6,7 @@ account_id = "049ff5e84ecf636b53b162cbb580aae6"
 [vars]
 OWNER = "Lucineer"
 REPO = "git-agent"
+
+[[kv_namespaces]]
+binding = "MEMORY"
+id = "bad6ce5df39b4a3e9ff4934b04af5363"
