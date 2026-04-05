@@ -557,6 +557,76 @@ export default {
       } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
     }
 
+    // ── Boot Camp: Ground Truth Assessment ──
+    if (path === '/api/bootcamp/assess' && request.method === 'POST') {
+      try {
+        // Captain probes its own ship
+        const contents = await ghGet(`${repoPath}/contents/`, GITHUB_TOKEN);
+        const fileCount = Array.isArray(contents) ? contents.length : 0;
+        const hasWrangler = Array.isArray(contents) && contents.some((f: any) => f.name === 'wrangler.toml');
+        const hasPackage = Array.isArray(contents) && contents.some((f: any) => f.name === 'package.json');
+        const hasAgent = Array.isArray(contents) && contents.some((f: any) => f.name === '.agent' || f.name === 'CLAUDE.md' || f.name === 'AGENT.md');
+        const hasDocker = Array.isArray(contents) && contents.some((f: any) => f.name === 'Dockerfile');
+        const hasDevcontainer = Array.isArray(contents) && contents.some((f: any) => f.name === '.devcontainer');
+        const languages = await ghGet(`${repoPath}/languages`, GITHUB_TOKEN).catch(() => ({}));
+        const langList = Object.keys(languages).join(', ') || 'unknown';
+        const commitCount = await ghGet(`${repoPath}/commits?per_page=1`, GITHUB_TOKEN).catch(() => []);
+        // Get total commit count from header if available, else approximate
+        let totalCommits = 0;
+        try { const c = await fetch(`${GH_API}${repoPath}/commits?per_page=1`, { headers: { Authorization: `Bearer ${GITHUB_TOKEN}` } }); const link = c.headers.get('link'); if (link) { const m = link.match(/page=(\d+)>; rel="last"/); if (m) totalCommits = parseInt(m[1]); } } catch {}
+        if (totalCommits === 0 && commitCount.length > 0) totalCommits = 1;
+
+        // Determine vessel type
+        const vesselType = hasWrangler ? 'cloudflare-worker' : hasDocker ? 'docker-container' : hasPackage ? 'node-app' : 'bare-repo';
+
+        // Determine boot camp phase
+        let phase = 'phase-0-untie';
+        if (hasAgent) phase = 'phase-1-ground-truth';
+        try { const gt = await readFile('.agent/ground-truth', GITHUB_TOKEN, repoPath); if (gt.trim().length > 0) phase = 'phase-2-building'; } catch {}
+        try { const sk = await readFile('.agent/skills/maintenance', GITHUB_TOKEN, repoPath); if (sk.trim().length > 0) phase = 'phase-3-skills-distilled'; } catch {}
+
+        const assessment = {
+          vessel: `${OWNER}/${REPO}`,
+          vesselType,
+          bootCampPhase: phase,
+          specs: { fileCount, totalCommits, languages: langList, hasWrangler, hasPackage, hasDocker, hasDevcontainer, hasAgent },
+          groundTruth: {
+            status: hasAgent ? 'detected' : 'no .agent/ directory',
+            phase,
+            recommendation: !hasAgent ? 'Run boot camp: create .agent/identity and .agent/ground-truth' : phase === 'phase-1-ground-truth' ? 'Human should review and confirm ground truth' : 'Ground truth established. Captain operational.',
+          },
+        };
+        return new Response(JSON.stringify(assessment), { headers: j });
+      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
+    }
+
+    // ── Boot Camp: Set Ground Truth ──
+    if (path === '/api/bootcamp/ground-truth' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const specs = body.specs || {};
+        const corrections = body.corrections || '';
+        const timestamp = new Date().toISOString();
+        const content = `# Ground Truth Log\n\nShip: ${OWNER}/${REPO}\nAssessed: ${timestamp}\n\n## Vessel Specs\n` +
+          Object.entries(specs).map(([k, v]) => `- ${k}: ${v}`).join('\n') +
+          `\n\n## Human Corrections\n${corrections || '(none — captain\'s assessment confirmed)'}\n\n## Status\nLOCKED — ground truth confirmed by human.\n`;
+        await writeFile('.agent/ground-truth', content, GITHUB_TOKEN, repoPath);
+        return new Response(JSON.stringify({ status: 'ground-truth-locked', content }), { headers: j });
+      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
+    }
+
+    // ── Boot Camp: Distill Skill ──
+    if (path === '/api/bootcamp/skill' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const skillName = body.name || 'maintenance';
+        const skillContent = body.content || '';
+        if (!skillContent.trim()) return new Response(JSON.stringify({ error: 'content required' }), { status: 400, headers: j });
+        await writeFile(`.agent/skills/${skillName}`, skillContent, GITHUB_TOKEN, repoPath);
+        return new Response(JSON.stringify({ status: 'skill-distilled', name: skillName, path: `.agent/skills/${skillName}` }), { headers: j });
+      } catch (e: any) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: j }); }
+    }
+
     if (path === '/api/webhook' && request.method === 'POST') {
       const result = await heartbeat(env);
       return new Response(JSON.stringify({ received: true, ...result }), { headers: j });
