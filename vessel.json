@@ -1,0 +1,39 @@
+{
+  "name": "git-agent",
+  "displayName": "Git-Agent",
+  "version": "1.0.0",
+  "type": "cocapn-vessel",
+  "description": "Git-Agent",
+  "icon": "\ud83e\udd16",
+  "color": "#1FCB58",
+  "category": "infrastructure",
+  "capabilities": [
+    "coding",
+    "autonomous"
+  ],
+  "secrets": {
+    "DEEPSEEK_API_KEY": {
+      "required": false,
+      "hint": "https://platform.deepseek.com/api_keys"
+    },
+    "DEEPINFRA_API_KEY": {
+      "required": false,
+      "hint": "https://deepinfra.com/dashboard/keys"
+    },
+    "SILICONFLOW_API_KEY": {
+      "required": false,
+      "hint": "https://cloud.siliconflow.cn"
+    }
+  },
+  "endpoints": {
+    "health": "/health"
+  },
+  "deployment": {
+    "platform": "cloudflare-workers",
+    "minPlan": "free"
+  },
+  "local": {
+    "supported": true,
+    "port": 8787
+  }
+}
