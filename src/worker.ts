@@ -683,6 +683,7 @@ export default {
     if (path === '/health') {
       return new Response(JSON.stringify({ status: 'ok', vessel: 'git-agent', version: '1.0.0', repo: `${OWNER}/${REPO}`, timestamp: Date.now() }), { headers: j });
     }
+  if (path === '/vessel.json') { try { const vj = await import('./vessel.json', { with: { type: 'json' } }); return new Response(JSON.stringify(vj.default || vj), { headers: { 'Content-Type': 'application/json' } }); } catch { return new Response('{}', { headers: { 'Content-Type': 'application/json' } }); } }
 
     if (path === '/api/state') {
       try {
