@@ -4,6 +4,6 @@
       "extensions": ["GitHub.copilot", "GitHub.copilot-chat", "ms-vscode.vscode-typescript-next"]
     }
   },
-  "postCreateCommand": "npm start",
+  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
   "forwardPorts": [8787]
 }
