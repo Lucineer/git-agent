@@ -1,66 +1,49 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Lucineer/capitaine/master/docs/capitaine-logo.jpg" alt="Git-Agent" width="120">
-</p>
+# git-agent
 
-<h1 align="center">git-agent</h1>
+You run your own agent. It lives in *your* fork, remembers everything with commits, and talks to other agents only via pull requests. The entire runtime is one ~450-line Cloudflare Worker with zero dependencies.
 
-<p align="center">A minimal autonomous agent that operates from its own git repository.</p>
-
-<p align="center">
-  <a href="#quick-start">Quick Start</a> ·
-  <a href="#how-it-works">How It Works</a> ·
-  <a href="#limitations">Limitations</a> ·
-  <a href="#the-fleet">The Fleet</a>
-</p>
-
----
-
-A fork-first autonomous agent. You don't install it; you fork the repository and modify it for your own use. The agent runs from the repository, using commits to record its actions and pull requests to communicate with other agents.
-
-There are no external databases, hidden orchestrators, or proprietary SaaS dependencies. The entire runtime is about 450 lines of code.
-
-### Why this exists
-
-Many agent platforms hide their core logic or depend on services you cannot control. This project makes every component visible and modifiable. You can read the entire codebase in a few minutes and deploy it on infrastructure you already use.
-
----
+🔗 **Live Demo:** [git-agent.casey-digennaro.workers.dev](https://git-agent.casey-digennaro.workers.dev)
 
 ## Quick Start
 
-1. **Fork this repository.**
-2. Click the green `<> Code` button, go to the **Codespaces** tab, and select **Create codespace on main**.
-3. A terminal wizard will guide you through setup.
-4. Follow the prompts to configure your agent and deploy it to Cloudflare Workers.
+1.  Fork this repository.
+2.  Click `<> Code` → **Codespaces** → "Create codespace on main".
+3.  Follow the 3-step terminal wizard to configure your agent.
+4.  Deploy to Cloudflare Workers.
 
-Your agent will be running in about two minutes.
+Your agent will start immediately. Every decision and action is written as a commit you can read, roll back, or delete.
 
 ## How It Works
 
-The agent is a Cloudflare Worker that periodically wakes up, processes tasks from its queue, and records its work as commits to its own repository. It can interact with other `git-agent` instances via pull requests.
+This is a single, scheduled Cloudflare Worker. When it runs, it:
+1.  Pulls its latest state from your GitHub repository.
+2.  Checks its task queue (a simple markdown file).
+3.  Uses your configured LLM to decide on the next action.
+4.  Executes that action (e.g., writes code, comments on an issue).
+5.  Commits all results—its reasoning, code changes, and updated state—directly back to the repo.
 
-The onboarding wizard configures:
-- Agent name and operational domain
-- LLM provider (DeepSeek, SiliconFlow, OpenAI, Anthropic, or local models)
-- Secure secret storage (GitHub Secrets or Cloudflare Secrets)
-- Deployment to Cloudflare Workers
+Agents coordinate by opening pull requests against each other's forks. There is no central server.
 
-Once running, the terminal interface shows:
-- Current task queue
-- Recent commits and activity
-- Agent decision log
-- Manual task input
+## What You Control
 
-## Limitations
+*   **The Code:** You own 100% of the logic in your fork.
+*   **The Memory:** All state is commits and files. Delete a commit, and the agent forgets.
+*   **The Keys:** Your LLM and GitHub API keys are stored in your Cloudflare environment. They are never transmitted elsewhere.
+*   **The Model:** Configure any major API (OpenAI, Anthropic, DeepSeek, SiliconFlow) or a local endpoint.
 
-This agent is designed for structured, code-oriented tasks. It is not a general-purpose conversational assistant and works best when given clear objectives that can be expressed as repository changes. Performance depends heavily on the selected LLM provider.
+## Features
 
-## The Fleet
+*   Fork-first autonomy. No hidden services or black-box dependencies.
+*   Git-native memory and audit trail.
+*   Peer-to-peer coordination via GitHub pull requests.
+*   Zero runtime dependencies (`npm install` is for tooling only).
+*   Live terminal dashboard in the codespace.
+*   MIT licensed.
 
-This agent is part of the Cocapn Fleet, an open-source agent runtime and fleet protocol.
+## One Specific Limitation
 
-<div>
-  <a href="https://the-fleet.casey-digennaro.workers.dev">The Fleet</a> ·
-  <a href="https://cocapn.ai">Cocapn</a>
-</div>
+This agent is designed for structured, asynchronous work on code and text. It runs on a schedule (e.g., once per minute) and processes **one task per execution cycle**. It is not suitable for real-time conversation or tasks requiring sub-second latency.
 
-Attribution: Superinstance & Lucineer (DiGennaro et al.)
+---
+
+<div style="text-align:center;padding:16px;color:#64748b;font-size:.8rem"><a href="https://the-fleet.casey-digennaro.workers.dev" style="color:#64748b">The Fleet</a> &middot; <a href="https://cocapn.ai" style="color:#64748b">Cocapn</a></div>
